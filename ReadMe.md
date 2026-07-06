@@ -14,3 +14,10 @@ cmd: `pip install selenium pytest`
 
 ## Deactivate environment 
 cmd: `deactivate`
+
+-------------------------------
+`python -m compileall .`
+
+`python -m mypy .` - Performs type checking (Recommended)
+
+`python -m ruff check .` - Code quality checking (Recommended)

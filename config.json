@@ -1,0 +1,10 @@
+{
+    "browser": "chrome",
+    "screen_resolution": {
+        "width": 1920,
+        "height": 1080
+    },
+    "url": "https://outlook.com/",
+    "implicit_wait": 20,
+    "explicit_wait": 30
+}

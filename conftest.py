@@ -1,3 +1,4 @@
+import allure
 import os
 import pytest
 
@@ -30,5 +31,11 @@ def pytest_runtest_makereport(item):
             folder: str = "screenshots"
             os.makedirs(folder, exist_ok=True)
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            pages.driver.save_screenshot(os.path.join(folder, f"{item.name}_{timestamp}.png"))
+            screenshot_path = os.path.join(folder, f"{item.name}_{timestamp}.png")
+            pages.driver.save_screenshot(screenshot_path)
             print(f"Sceenshot captured with timestamp {timestamp}")
+            allure.attach.file(
+                screenshot_path,
+                name="Failure Screenshot",
+                attachment_type=allure.attachment_type.PNG
+            )

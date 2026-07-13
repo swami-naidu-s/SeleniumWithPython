@@ -89,7 +89,7 @@ jobs:
 
       - name: Execute Tests
         run: |
-          pytest Tests -v --alluredir=allure-results
+          pytest -s -v --alluredir=allure-results
         # continue-on-error: true
 
       - name: Upload Allure Results
@@ -98,6 +98,13 @@ jobs:
         with:
           name: allure-results
           path: allure-results
+
+      - name: Upload Test Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: TestResults
+          path: TestResults/
 
   allure:
     if: always()

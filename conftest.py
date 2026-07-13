@@ -3,22 +3,30 @@ import os
 import pytest
 
 from Base.Browser import Browser
-from Base.Utilities import get_config_data
+from Base.Utilities import get_config_data, get_logger
 from datetime import datetime
+from logging import Logger
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.remote.webdriver import WebDriver
 
 class Pages:
-    def __init__(self, driver: WebDriver, wait: WebDriverWait):
+    def __init__(self, driver: WebDriver, wait: WebDriverWait, logger: Logger):
         self.driver = driver
         self.wait = wait
+        self.logger = logger
 
 @pytest.fixture
-def pages():
+def pages(request):
+    testcase_name = request.node.name
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    request.node.timestamp = timestamp
+    logger: Logger = get_logger(testcase_name, timestamp)
+    logger.info("Testcase started successfully")
     driver: WebDriver = Browser.navigate_to_url()
     wait: WebDriverWait = WebDriverWait(driver, get_config_data("explicit_wait"))
-    yield Pages(driver, wait)
+    yield Pages(driver, wait, logger)
     Browser.clean_up_browser(driver)
+    logger.info("Testcase execution completed")
 
 @pytest.hookimpl(hookwrapper=True)
 def pytest_runtest_makereport(item):
@@ -28,12 +36,19 @@ def pytest_runtest_makereport(item):
     if report.when == "call" and report.failed:
         pages = item.funcargs.get("pages")
         if pages:
-            folder: str = "screenshots"
+            # timestamp = getattr(item, "timestamp", None)
+            timestamp = item.timestamp
+            folder: str = os.path.join("TestResults", f"{timestamp}_{item.name}")
+            pages.logger.error("Testcase Failed.")
             os.makedirs(folder, exist_ok=True)
-            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            screenshot_path = os.path.join(folder, f"{item.name}_{timestamp}.png")
+            # timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            # screenshot_path = os.path.join(folder, f"{item.name}_{timestamp}.png")
+            screenshot_path = os.path.join(folder, f"{item.name}.png")
             pages.driver.save_screenshot(screenshot_path)
-            print(f"Sceenshot captured with timestamp {timestamp}")
+            # print(f"Sceenshot captured with timestamp {timestamp}")
+            print(f"Sceenshot captured")
+            pages.logger.info("Screenshot captured")
+            # Add logs as testcase failed
             allure.attach.file(
                 screenshot_path,
                 name="Failure Screenshot",

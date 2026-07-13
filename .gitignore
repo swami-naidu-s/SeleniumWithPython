@@ -3,6 +3,7 @@ __pycache__/
 *.pyc 
 .vscode/ 
 .idea/ 
+.pytest_cache/
 [Ss]creenshots/*
 reports/ 
 allure-results/

@@ -89,7 +89,7 @@ jobs:
 
       - name: Execute Tests
         run: |
-          pytest -s -v --alluredir=allure-results
+          pytest -n 2 -s -v --alluredir=allure-results
         # continue-on-error: true
 
       - name: Upload Allure Results

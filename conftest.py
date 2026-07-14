@@ -6,7 +6,7 @@ from Base.Browser import Browser
 from Base.Utilities import get_config_data, get_logger
 from datetime import datetime
 from logging import Logger
-from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.remote.webdriver import WebDriver
 
 class Pages:

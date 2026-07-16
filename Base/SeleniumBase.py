@@ -1,8 +1,10 @@
 from logging import Logger
 from time import sleep
 from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.common.alert import Alert
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
+from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions
 
@@ -20,6 +22,15 @@ class SeleniumBase:
             wait.until(expected_conditions.visibility_of_element_located(*element))
         else:
             wait.until(expected_conditions.visibility_of(element))
+
+    def wait_for_element_to_be_invisible(self, element: tuple[str, str] | WebElement, timeout_seconds: int | None):
+        if isinstance(timeout_seconds, int):
+            wait = WebDriverWait(self.driver, timeout_seconds)
+        wait = wait if isinstance(wait, WebDriverWait) else self.wait
+        if isinstance(element, tuple[str, str]):
+            wait.until(expected_conditions.invisibility_of_element_located(*element))
+        else:
+            wait.until(expected_conditions.invisibility_of_element(element))
 
     def wait_for_element_to_be_clickable(self, element: tuple[str, str] | WebElement, timeout_seconds: int | None):
         if isinstance(timeout_seconds, int):
@@ -154,7 +165,114 @@ class SeleniumBase:
             self.wait_for_element_to_be_clickable(element, timeout_seconds)
             if isinstance(element, tuple[str, str]):
                 element = self.driver.find_element(*element)
-            # Select class implementation
+            Select(element).select_by_visible_text(text)
+            self.logger.info(f"{log_message} | Selected {text} from dropdown | {element}")
+        except Exception as e:
+            self.logger.exception(e)
+            raise f"Exception occured: {e}"
+        
+    def select_dropdown_by_value(self, element: tuple[str, str] | WebElement, value: str, log_message: str, timeout_seconds: int | None = None):
+        try:
+            self.wait_for_element_to_be_visible(element, timeout_seconds)
+            self.scroll_to_element(element)
+            self.wait_for_element_to_be_clickable(element, timeout_seconds)
+            if isinstance(element, tuple[str, str]):
+                element = self.driver.find_element(*element)
+            Select(element).select_by_value(value)
+            self.logger.info(f"{log_message} | Selected value {value} from dropdown | {element}")
+        except Exception as e:
+            self.logger.exception(e)
+            raise f"Exception occured: {e}"
+        
+    def select_dropdown_by_index(self, element: tuple[str, str] | WebElement, index: int, log_message: str, timeout_seconds: int | None = None):
+        try:
+            self.wait_for_element_to_be_visible(element, timeout_seconds)
+            self.scroll_to_element(element)
+            self.wait_for_element_to_be_clickable(element, timeout_seconds)
+            if isinstance(element, tuple[str, str]):
+                element = self.driver.find_element(*element)
+            Select(element).select_by_index(index)
+            self.logger.info(f"{log_message} | Selected index {index} from dropdown | {element}")
+        except Exception as e:
+            self.logger.exception(e)
+            raise f"Exception occured: {e}"
+        
+    def is_alert_present(self, timeout_seconds: int) -> bool:
+        t: int = 0
+        while True:
+            try:
+                self.driver.switch_to.alert
+                return True
+            except Exception as e:
+                t += 1
+                if t >= timeout_seconds:
+                    return False
+                sleep(1)
+    
+    def accept_alert(self, log_message: str, timeout_seconds: int | None = None):
+        try:
+            wait: WebDriverWait
+            if isinstance(timeout_seconds, int):
+                wait = WebDriverWait(self.driver, timeout_seconds)
+            elif isinstance(timeout_seconds, None):
+                wait = self.wait
+            alert = wait.until(expected_conditions.alert_is_present())
+            self.logger.info(f"Alert Text: {alert.text}")
+            alert.accept()
+            self.logger.info(f"{log_message} | Accepted the alert")
+        except Exception as e:
+            self.logger.exception(e)
+            raise f"Exception occured: {e}"
+    
+    def dismiss_alert(self, log_message: str, timeout_seconds: int | None = None):
+        try:
+            wait: WebDriverWait
+            if isinstance(timeout_seconds, int):
+                wait = WebDriverWait(self.driver, timeout_seconds)
+            elif isinstance(timeout_seconds, None):
+                wait = self.wait
+            alert = wait.until(expected_conditions.alert_is_present())
+            self.logger.info(f"Alert Text: {alert.text}")
+            alert.dismiss()
+            self.logger.info(f"{log_message} | Dismissed the alert")
+        except Exception as e:
+            self.logger.exception(e)
+            raise f"Exception occured: {e}"
+
+    def get_attribute(self, element: tuple[str, str] | WebElement, attribute: str, log_message: str, timeout_seconds: int | None = None) -> str:
+        try:
+            self.wait_for_element_to_be_visible(element, timeout_seconds)
+            self.scroll_to_element(element)
+            self.wait_for_element_to_be_clickable(element, timeout_seconds)
+            if isinstance(element, tuple[str, str]):
+                element = self.driver.find_element(*element)
+            value = element.get_attribute(attribute)
+            self.logger.info(f"{log_message} | Retrieved attribute {attribute} value - {value} | {element}")
+            return value
+        except Exception as e:
+            self.logger.exception(e)
+            raise f"Exception occured: {e}"
+
+    def get_text(self, element: tuple[str, str] | WebElement, log_message: str, timeout_seconds: int | None = None) -> str:
+        try:
+            self.wait_for_element_to_be_visible(element, timeout_seconds)
+            self.scroll_to_element(element)
+            self.wait_for_element_to_be_clickable(element, timeout_seconds)
+            if isinstance(element, tuple[str, str]):
+                element = self.driver.find_element(*element)
+            value = element.text
+            self.logger.info(f"{log_message} | Retrieved text value - {value} | {element}")
+            return value
+        except Exception as e:
+            self.logger.exception(e)
+            raise f"Exception occured: {e}"
+        
+    def wait_for_page_load(self, timeout_seconds: int | None = None):
+        try: 
+            if isinstance(timeout_seconds, int):
+                wait = WebDriverWait(self.driver, timeout_seconds)
+            wait = wait if isinstance(wait, WebDriverWait) else self.wait
+            wait.until(lambda d: d.execute_script("return document.readyState") == "complete")
         except Exception as e:
             self.logger.exception(e)
             raise f"Exception occured: {e}"

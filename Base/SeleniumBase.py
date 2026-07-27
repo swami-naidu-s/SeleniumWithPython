@@ -2,6 +2,7 @@ from logging import Logger
 from time import sleep
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.alert import Alert
+from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.select import Select
@@ -55,7 +56,7 @@ class SeleniumBase:
             self.logger.info(f"{log_message} | Entered text {text} | {element}")
         except Exception as e:
             self.logger.exception(e)
-            raise f"Exception occured: {e}"
+            raise f"Exception occurred: {e}"
 
     def enter_text_js(self, element: tuple[str, str] | WebElement, text: str, log_message: str, clear: bool = False, timeout_seconds: int | None = None):
         try:
@@ -69,7 +70,7 @@ class SeleniumBase:
             self.logger.info(f"{log_message} | Entered text {text} with js | {element}")
         except Exception as e:
             self.logger.exception(e)
-            raise f"Exception occured: {e}"
+            raise f"Exception occurred: {e}"
 
     def click(self, element: tuple[str, str] | WebElement, log_message: str, timeout_seconds: int | None = None):
         try:
@@ -82,7 +83,7 @@ class SeleniumBase:
             self.logger.info(f"{log_message} | Clicked on element | {element}")
         except Exception as e:
             self.logger.exception(e)
-            raise f"Exception occured: {e}"
+            raise f"Exception occurred: {e}"
 
     def click_js(self, element: tuple[str, str] | WebElement, log_message: str, timeout_seconds: int | None = None):
         try:
@@ -95,7 +96,7 @@ class SeleniumBase:
             self.logger.info(f"{log_message} | Clicked on element with js | {element}")
         except Exception as e:
             self.logger.exception(e)
-            raise f"Exception occured: {e}"
+            raise f"Exception occurred: {e}"
         
     def right_click(self, element: tuple[str, str] | WebElement, log_message: str, timeout_seconds: int | None = None):
         try:
@@ -108,9 +109,9 @@ class SeleniumBase:
             self.logger.info(f"{log_message} | Right clicked on element | {element}")
         except Exception as e:
             self.logger.exception(e)
-            raise f"Exception occured: {e}"
+            raise f"Exception occurred: {e}"
         
-    def is_enabled(self, element: tuple[str, str] | WebElement, timeout_seconds: int | None = None) -> bool:
+    def is_element_enabled(self, element: tuple[str, str] | WebElement, timeout_seconds: int | None = None) -> bool:
         result: bool = False
         if isinstance(element, tuple[str, str]):
             element = self.driver.find_element(*element)
@@ -126,7 +127,7 @@ class SeleniumBase:
                     timeout_seconds -= 1
         return result
         
-    def is_checked(self, element: tuple[str, str] | WebElement, timeout_seconds: int | None = None) -> bool:
+    def is_element_checked(self, element: tuple[str, str] | WebElement, timeout_seconds: int | None = None) -> bool:
         result: bool = False
         if isinstance(element, tuple[str, str]):
             element = self.driver.find_element(*element)
@@ -169,7 +170,7 @@ class SeleniumBase:
             self.logger.info(f"{log_message} | Selected {text} from dropdown | {element}")
         except Exception as e:
             self.logger.exception(e)
-            raise f"Exception occured: {e}"
+            raise f"Exception occurred: {e}"
         
     def select_dropdown_by_value(self, element: tuple[str, str] | WebElement, value: str, log_message: str, timeout_seconds: int | None = None):
         try:
@@ -182,7 +183,7 @@ class SeleniumBase:
             self.logger.info(f"{log_message} | Selected value {value} from dropdown | {element}")
         except Exception as e:
             self.logger.exception(e)
-            raise f"Exception occured: {e}"
+            raise f"Exception occurred: {e}"
         
     def select_dropdown_by_index(self, element: tuple[str, str] | WebElement, index: int, log_message: str, timeout_seconds: int | None = None):
         try:
@@ -195,7 +196,7 @@ class SeleniumBase:
             self.logger.info(f"{log_message} | Selected index {index} from dropdown | {element}")
         except Exception as e:
             self.logger.exception(e)
-            raise f"Exception occured: {e}"
+            raise f"Exception occurred: {e}"
         
     def is_alert_present(self, timeout_seconds: int) -> bool:
         t: int = 0
@@ -222,7 +223,7 @@ class SeleniumBase:
             self.logger.info(f"{log_message} | Accepted the alert")
         except Exception as e:
             self.logger.exception(e)
-            raise f"Exception occured: {e}"
+            raise f"Exception occurred: {e}"
     
     def dismiss_alert(self, log_message: str, timeout_seconds: int | None = None):
         try:
@@ -237,7 +238,18 @@ class SeleniumBase:
             self.logger.info(f"{log_message} | Dismissed the alert")
         except Exception as e:
             self.logger.exception(e)
-            raise f"Exception occured: {e}"
+            raise f"Exception occurred: {e}"
+        
+    def get_alert_text(self, log_message: str, timeout_seconds: int | None = None) -> str:
+        wait: WebDriverWait
+        if isinstance(timeout_seconds, int):
+            wait = WebDriverWait(self.driver, timeout_seconds)
+        elif isinstance(timeout_seconds, None):
+            wait = self.wait
+        alert = wait.until(expected_conditions.alert_is_present())
+        text: str = alert.text
+        self.logger.info(f"Alert Text: {text}")
+        return text
 
     def get_attribute(self, element: tuple[str, str] | WebElement, attribute: str, log_message: str, timeout_seconds: int | None = None) -> str:
         try:
@@ -251,7 +263,7 @@ class SeleniumBase:
             return value
         except Exception as e:
             self.logger.exception(e)
-            raise f"Exception occured: {e}"
+            raise f"Exception occurred: {e}"
 
     def get_text(self, element: tuple[str, str] | WebElement, log_message: str, timeout_seconds: int | None = None) -> str:
         try:
@@ -265,7 +277,7 @@ class SeleniumBase:
             return value
         except Exception as e:
             self.logger.exception(e)
-            raise f"Exception occured: {e}"
+            raise f"Exception occurred: {e}"
         
     def wait_for_page_load(self, timeout_seconds: int | None = None):
         try: 
@@ -275,7 +287,7 @@ class SeleniumBase:
             wait.until(lambda d: d.execute_script("return document.readyState") == "complete")
         except Exception as e:
             self.logger.exception(e)
-            raise f"Exception occured: {e}"
+            raise f"Exception occurred: {e}"
 
     def double_click(self, element: tuple[str, str] | WebElement, log_message: str, timeout_seconds: int | None = None):
         try:
@@ -288,7 +300,7 @@ class SeleniumBase:
             self.logger.info(f"{log_message} | Double clicked on element | {element}")
         except Exception as e:
             self.logger.exception(e)
-            raise f"Exception occured: {e}"
+            raise f"Exception occurred: {e}"
         
     def click_and_hold(self, element: tuple[str, str] | WebElement, log_message: str, timeout_seconds: int | None = None):
         try:
@@ -301,7 +313,7 @@ class SeleniumBase:
             self.logger.info(f"{log_message} | Click and holded on element | {element}")
         except Exception as e:
             self.logger.exception(e)
-            raise f"Exception occured: {e}"
+            raise f"Exception occurred: {e}"
         
     def drag_and_drop(self, source_element: tuple[str, str] | WebElement, destination_element: tuple[str, str] | WebElement, log_message: str, timeout_seconds: int | None = None):
         try:
@@ -316,4 +328,41 @@ class SeleniumBase:
             self.logger.info(f"{log_message} | Dragged and dropped | {source_element}, {destination_element}")
         except Exception as e:
             self.logger.exception(e)
-            raise f"Exception occured: {e}"
+            raise f"Exception occurred: {e}"
+        
+    def press_tab(self, element: tuple[str, str] | WebElement | None = None, timeout_seconds: int | None = None):
+        try:
+            if isinstance(element, None):
+                ActionChains(self.driver).send_keys(Keys.TAB).perform()
+            else:
+                self.wait_for_element_to_be_visible(element, timeout_seconds)
+                if isinstance(element, tuple[str, str]):
+                    element = self.driver.find_element(*element)
+                element.send_keys(Keys.TAB)
+            self.logger.info(f"Pressed Tab | {element}")
+        except Exception as e:
+            self.logger.exception(e)
+            raise f"Exception occurred: {e}"
+        
+    def hover(self, element: tuple[str, str] | WebElement, log_message: str, timeout_seconds: int | None = None):
+        try:
+            self.wait_for_element_to_be_visible(element, timeout_seconds)
+            if isinstance(element, tuple[str, str]):
+                element = self.driver.find_element(*element)
+            ActionChains(self.driver).move_to_element(element).perform()
+            self.logger.info(f"{log_message} | Hovered on element | {element}")
+        except Exception as e:
+            self.logger.exception(e)
+            raise f"Exception occurred: {e}"
+        
+    def hover_and_click(self, element: tuple[str, str] | WebElement, log_message: str, timeout_seconds: int | None = None):
+        try:
+            self.wait_for_element_to_be_visible(element, timeout_seconds)
+            self.wait_for_element_to_be_clickable(element, timeout_seconds)
+            if isinstance(element, tuple[str, str]):
+                element = self.driver.find_element(*element)
+            ActionChains(self.driver).move_to_element(element).click().perform()
+            self.logger.info(f"{log_message} | Hovered and Clicked on element | {element}")
+        except Exception as e:
+            self.logger.exception(e)
+            raise f"Exception occurred: {e}"

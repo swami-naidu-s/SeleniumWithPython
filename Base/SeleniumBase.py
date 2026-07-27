@@ -336,6 +336,7 @@ class SeleniumBase:
                 ActionChains(self.driver).send_keys(Keys.TAB).perform()
             else:
                 self.wait_for_element_to_be_visible(element, timeout_seconds)
+                self.scroll_to_element(element)
                 if isinstance(element, tuple[str, str]):
                     element = self.driver.find_element(*element)
                 element.send_keys(Keys.TAB)
@@ -347,6 +348,7 @@ class SeleniumBase:
     def hover(self, element: tuple[str, str] | WebElement, log_message: str, timeout_seconds: int | None = None):
         try:
             self.wait_for_element_to_be_visible(element, timeout_seconds)
+            self.scroll_to_element(element)
             if isinstance(element, tuple[str, str]):
                 element = self.driver.find_element(*element)
             ActionChains(self.driver).move_to_element(element).perform()
@@ -358,6 +360,7 @@ class SeleniumBase:
     def hover_and_click(self, element: tuple[str, str] | WebElement, log_message: str, timeout_seconds: int | None = None):
         try:
             self.wait_for_element_to_be_visible(element, timeout_seconds)
+            self.scroll_to_element(element)
             self.wait_for_element_to_be_clickable(element, timeout_seconds)
             if isinstance(element, tuple[str, str]):
                 element = self.driver.find_element(*element)

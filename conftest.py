@@ -2,8 +2,9 @@
 # import os
 # import pytest
 
-from base.browser import Browser
-from base.utilities import get_config_data, get_logger
+# from base.browser import Browser
+# from base.utilities import get_config_data, get_logger
+from base import Browser, get_logger, get_config_data
 # from datetime import datetime
 # from logging import Logger
 # from selenium.webdriver.support.ui import WebDriverWait

@@ -1,6 +1,7 @@
-from selenium import webdriver
-from Base.Utilities import get_config_data
-from selenium.webdriver.remote.webdriver import WebDriver
+# from selenium import webdriver
+from base.utilities import get_config_data
+# from selenium.webdriver.remote.webdriver import WebDriver
+from common_imports import *
 
 class Browser:
     def navigate_to_url(url:str = "") -> WebDriver:

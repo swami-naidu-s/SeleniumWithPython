@@ -1,19 +1,23 @@
-import allure
-import os
-import pytest
+# import allure
+# import os
+# import pytest
 
-from Base.Browser import Browser
-from Base.Utilities import get_config_data, get_logger
-from datetime import datetime
-from logging import Logger
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.remote.webdriver import WebDriver
+from base.browser import Browser
+from base.utilities import get_config_data, get_logger
+# from datetime import datetime
+# from logging import Logger
+# from selenium.webdriver.support.ui import WebDriverWait
+# from selenium.webdriver.remote.webdriver import WebDriver
+from common_imports import *
+from pb_pages import *
 
 class Pages:
     def __init__(self, driver: WebDriver, wait: WebDriverWait, logger: Logger):
         self.driver = driver
         self.wait = wait
         self.logger = logger
+        self.home_page = HomePage(driver, wait, logger)
+        self.sign_up_page = SignUpPage(driver, wait, logger)
 
 @pytest.fixture
 def pages(request):

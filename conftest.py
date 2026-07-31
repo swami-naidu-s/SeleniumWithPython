@@ -12,6 +12,20 @@ from base import Browser, get_logger, get_config_data
 from common_imports import *
 from pb_pages import *
 
+import sys
+
+print("=" * 80)
+print("Current Working Directory:", os.getcwd())
+print("=" * 80)
+print("Python Executable:", sys.executable)
+print("=" * 80)
+print("sys.path")
+
+for p in sys.path:
+    print(p)
+
+print("=" * 80)
+
 class Pages:
     def __init__(self, driver: WebDriver, wait: WebDriverWait, logger: Logger):
         self.driver = driver

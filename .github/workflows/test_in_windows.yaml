@@ -87,6 +87,16 @@ jobs:
       #         exit 1
       #     }
 
+      - name: Show Current Directory
+        shell: cmd
+        run: |
+          echo Current Directory:
+          cd
+          echo.
+          dir
+          echo.
+          dir base
+
       - name: Execute Tests
         run: |
           pytest -n 2 -s -v --alluredir=allure-results
@@ -138,7 +148,7 @@ jobs:
         with:
           path: allure-report
 
-  deploy:
+  deploy-report:
     if: always()
     needs: allure
 

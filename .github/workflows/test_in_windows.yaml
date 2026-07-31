@@ -97,9 +97,14 @@ jobs:
           echo.
           dir base
 
+      - name: Python Debug
+        shell: cmd
+        run: |
+          python -c "import os,sys; print('cwd=', os.getcwd()); print(); print('sys.path='); [print(p) for p in sys.path]"
+
       - name: Execute Tests
         run: |
-          pytest -n 2 -s -v --alluredir=allure-results
+          python -m pytest -n 2 -s -v --alluredir=allure-results
         # continue-on-error: true
 
       - name: Upload Allure Results

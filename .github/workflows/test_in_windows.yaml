@@ -134,7 +134,10 @@ jobs:
 
   deploy-report:
     needs: allure
-    if: needs.allure.result == 'success'
+    if: |
+      needs.allure.result == 'success' &&
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/main'
 
     runs-on: ubuntu-latest
 

@@ -87,30 +87,30 @@ jobs:
       #         exit 1
       #     }
 
-      - name: Show Current Directory
-        shell: cmd
-        run: |
-          echo Current Directory:
-          cd
-          echo.
-          dir
-          echo.
-          dir base
+      # - name: Show Current Directory
+      #   shell: cmd
+      #   run: |
+      #     echo Current Directory:
+      #     cd
+      #     echo.
+      #     dir
+      #     echo.
+      #     dir base
 
-      - name: Python Debug
-        shell: cmd
-        run: |
-          python -c "import os,sys; print('cwd=', os.getcwd()); print(); print('sys.path='); [print(p) for p in sys.path]"
+      # - name: Python Debug
+      #   shell: cmd
+      #   run: |
+      #     python -c "import os,sys; print('cwd=', os.getcwd()); print(); print('sys.path='); [print(p) for p in sys.path]"
 
-      - name: Check package name
-        shell: cmd
-        run: |
-          python -c "import os; print(os.path.isdir('Base')); print(os.path.isdir('base')); print(os.listdir())"
+      # - name: Check package name
+      #   shell: cmd
+      #   run: |
+      #     python -c "import os; print(os.path.isdir('Base')); print(os.path.isdir('base')); print(os.listdir())"
 
-      - name: Try importing Base
-        shell: cmd
-        run: |
-          python -c "import os,sys; sys.path.insert(0, os.getcwd()); print(sys.path[0]); import Base; print(Base.__file__)"
+      # - name: Try importing Base
+      #   shell: cmd
+      #   run: |
+      #     python -c "import os,sys; sys.path.insert(0, os.getcwd()); print(sys.path[0]); import Base; print(Base.__file__)"
 
       - name: Execute Tests
         run: |

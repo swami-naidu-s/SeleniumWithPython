@@ -102,6 +102,16 @@ jobs:
         run: |
           python -c "import os,sys; print('cwd=', os.getcwd()); print(); print('sys.path='); [print(p) for p in sys.path]"
 
+      - name: Verify imports
+        shell: cmd
+        run: |
+          python -c "import os,sys; sys.path.insert(0, os.getcwd()); import base; print('SUCCESS:', base.__file__)"
+
+      - name: Python Import Test
+        shell: cmd
+        run: |
+          python -c "import os,sys; print(os.getcwd()); sys.path.insert(0, os.getcwd()); print(sys.path[0]); import base; print(base.__file__)"
+
       - name: Execute Tests
         run: |
           python -m pytest -n 2 -s -v --alluredir=allure-results

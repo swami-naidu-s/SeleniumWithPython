@@ -1,17 +1,3 @@
-
-import sys
-
-print("=" * 80)
-print("Current Working Directory:", os.getcwd())
-print("=" * 80)
-print("Python Executable:", sys.executable)
-print("=" * 80)
-print("sys.path")
-
-for p in sys.path:
-    print(p)
-
-print("=" * 80)
 # import allure
 # import os
 # import pytest

@@ -13,7 +13,12 @@ on:
 
 jobs:
   test:
+    name: Selenium Tests
     runs-on: windows-latest
+
+    outputs:
+      has_allure: ${{ steps.check_allure.outputs.has_allure }}
+      has_testresults: ${{ steps.check_results.outputs.has_results }}
 
     steps:
       - name: Checkout Repository
@@ -37,6 +42,10 @@ jobs:
         run: |
           pip install -r requirements.txt
 
+      # - name: Install Project
+      #   run: |
+      #     pip install -e .
+
       - name: Validate Python Syntax
         run: |
           python -m compileall .
@@ -47,75 +56,32 @@ jobs:
           mkdir Screenshots
         shell: cmd
 
-      # - name: Execute Tests
-      #   shell: pwsh
-      #   run: |
-      #     pytest Tests -v -s `
-      #       --junitxml=Reports/test-results.xml `
-      #       --html=Reports/report.html `
-      #       --self-contained-html
-
-      #     echo "PYTEST_EXIT_CODE=$LASTEXITCODE" >> $env:GITHUB_ENV
-      #   continue-on-error: true
-
-      # - name: Upload HTML Report
-      #   if: always()
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: html-report
-      #     path: Reports/report.html
-
-      # - name: Upload JUnit Results
-      #   if: always()
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: junit-results
-      #     path: Reports/test-results.xml
-
-      # - name: Upload Screenshots
-      #   if: always()
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: failure-screenshots
-      #     path: Screenshots/
-
-      # - name: Fail Workflow If Tests Failed
-      #   shell: pwsh
-      #   run: |
-      #     if ($env:PYTEST_EXIT_CODE -ne 0) {
-      #         Write-Host "One or more tests failed."
-      #         exit 1
-      #     }
-
-      # - name: Show Current Directory
-      #   shell: cmd
-      #   run: |
-      #     echo Current Directory:
-      #     cd
-      #     echo.
-      #     dir
-      #     echo.
-      #     dir base
-
-      # - name: Python Debug
-      #   shell: cmd
-      #   run: |
-      #     python -c "import os,sys; print('cwd=', os.getcwd()); print(); print('sys.path='); [print(p) for p in sys.path]"
-
-      # - name: Check package name
-      #   shell: cmd
-      #   run: |
-      #     python -c "import os; print(os.path.isdir('Base')); print(os.path.isdir('base')); print(os.listdir())"
-
-      # - name: Try importing Base
-      #   shell: cmd
-      #   run: |
-      #     python -c "import os,sys; sys.path.insert(0, os.getcwd()); print(sys.path[0]); import Base; print(Base.__file__)"
-
       - name: Execute Tests
         run: |
           python -m pytest -n 2 -s -v --alluredir=allure-results
         # continue-on-error: true
+
+      - name: Check Allure Results
+        id: check_allure
+        shell: pwsh
+        run: |
+          if ((Test-Path "allure-results") -and ((Get-ChildItem allure-results -Recurse -File).Count -gt 0)) {
+            "has_allure=true" >> $env:GITHUB_OUTPUT
+          }
+          else {
+            "has_allure=false" >> $env:GITHUB_OUTPUT
+          }
+
+      - name: Check Test Results
+        id: check_results
+        shell: pwsh
+        run: |
+          if ((Test-Path "TestResults") -and ((Get-ChildItem TestResults -Recurse -File).Count -gt 0)) {
+            "has_results=true" >> $env:GITHUB_OUTPUT
+          }
+          else {
+            "has_results=false" >> $env:GITHUB_OUTPUT
+          }
 
       - name: Upload Allure Results
         uses: actions/upload-artifact@v4
@@ -132,8 +98,8 @@ jobs:
           path: TestResults/
 
   allure:
-    if: always()
     needs: test
+    if: needs.test.outputs.has_allure == 'true'
 
     runs-on: ubuntu-latest
 
@@ -141,6 +107,9 @@ jobs:
       contents: write
       pages: write
       id-token: write
+
+    outputs:
+      report_generated: true
 
     steps:
 
@@ -164,8 +133,8 @@ jobs:
           path: allure-report
 
   deploy-report:
-    if: always()
     needs: allure
+    if: needs.allure.result == 'success'
 
     runs-on: ubuntu-latest
 

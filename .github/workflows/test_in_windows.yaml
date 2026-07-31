@@ -102,15 +102,15 @@ jobs:
         run: |
           python -c "import os,sys; print('cwd=', os.getcwd()); print(); print('sys.path='); [print(p) for p in sys.path]"
 
-      - name: Verify imports
+      - name: Check package name
         shell: cmd
         run: |
-          python -c "import os,sys; sys.path.insert(0, os.getcwd()); import base; print('SUCCESS:', base.__file__)"
+          python -c "import os; print(os.path.isdir('Base')); print(os.path.isdir('base')); print(os.listdir())"
 
-      - name: Python Import Test
+      - name: Try importing Base
         shell: cmd
         run: |
-          python -c "import os,sys; print(os.getcwd()); sys.path.insert(0, os.getcwd()); print(sys.path[0]); import base; print(base.__file__)"
+          python -c "import os,sys; sys.path.insert(0, os.getcwd()); print(sys.path[0]); import Base; print(Base.__file__)"
 
       - name: Execute Tests
         run: |

@@ -9,7 +9,7 @@ class SignUpPage(SeleniumBase):
         self.wait = wait
         self.logger = logger
 
-    __label_textbox: tuple[str, str] = lambda self, label: (By.XPATH, f"//td[contains(.,'{label}')]/following-sibling::td/input")
+    __label_textbox = lambda self, label: (By.XPATH, f"//td[contains(.,'{label}')]/following-sibling::td/input")
     __register_button: tuple[str, str] = (By.XPATH, "//input[@value='Register']")
     __title: tuple[str, str] = (By.XPATH, "//h1[@class='title']")
     __success_note: tuple[str, str] = (By.XPATH, "//div[@id='rightPanel']/p")

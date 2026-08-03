@@ -32,7 +32,7 @@ class SeleniumBase:
             wait = WebDriverWait(self.driver, timeout_seconds)
         wait = wait if isinstance(wait, WebDriverWait) else self.wait
         if isinstance(element, tuple):
-            wait.until(expected_conditions.invisibility_of_element_located(*element))
+            wait.until(expected_conditions.invisibility_of_element_located(element))
         else:
             wait.until(expected_conditions.invisibility_of_element(element))
 
@@ -263,6 +263,8 @@ class SeleniumBase:
             if isinstance(element, tuple):
                 element = self.driver.find_element(*element)
             value = element.get_attribute(attribute)
+            if isinstance(value, type(None)):
+                value = ""
             self.logger.info(f"{log_message} | Retrieved attribute {attribute} value - {value} | {element}")
             return value
         except Exception as e:

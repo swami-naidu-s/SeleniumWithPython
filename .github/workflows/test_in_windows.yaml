@@ -13,7 +13,12 @@ on:
 
 jobs:
   test:
+    name: Selenium Tests
     runs-on: windows-latest
+
+    outputs:
+      has_allure: ${{ steps.check_allure.outputs.has_allure }}
+      has_testresults: ${{ steps.check_results.outputs.has_results }}
 
     steps:
       - name: Checkout Repository
@@ -29,17 +34,16 @@ jobs:
           python --version
           pip --version
 
-      - name: Upgrade pip
-        run: |
-          python -m pip install --upgrade pip
-
       - name: Install Dependencies
         run: |
+          python -m pip install --upgrade pip
           pip install -r requirements.txt
+          pip install -e .
 
       - name: Validate Python Syntax
         run: |
           python -m compileall .
+          python -m mypy .
 
       - name: Create Report Directories
         run: |
@@ -47,50 +51,32 @@ jobs:
           mkdir Screenshots
         shell: cmd
 
-      # - name: Execute Tests
-      #   shell: pwsh
-      #   run: |
-      #     pytest Tests -v -s `
-      #       --junitxml=Reports/test-results.xml `
-      #       --html=Reports/report.html `
-      #       --self-contained-html
-
-      #     echo "PYTEST_EXIT_CODE=$LASTEXITCODE" >> $env:GITHUB_ENV
-      #   continue-on-error: true
-
-      # - name: Upload HTML Report
-      #   if: always()
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: html-report
-      #     path: Reports/report.html
-
-      # - name: Upload JUnit Results
-      #   if: always()
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: junit-results
-      #     path: Reports/test-results.xml
-
-      # - name: Upload Screenshots
-      #   if: always()
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: failure-screenshots
-      #     path: Screenshots/
-
-      # - name: Fail Workflow If Tests Failed
-      #   shell: pwsh
-      #   run: |
-      #     if ($env:PYTEST_EXIT_CODE -ne 0) {
-      #         Write-Host "One or more tests failed."
-      #         exit 1
-      #     }
-
       - name: Execute Tests
         run: |
-          pytest -n 2 -s -v --alluredir=allure-results
+          python -m pytest --alluredir=allure-results
         # continue-on-error: true
+
+      - name: Check Allure Results
+        id: check_allure
+        shell: pwsh
+        run: |
+          if ((Test-Path "allure-results") -and ((Get-ChildItem allure-results -Recurse -File).Count -gt 0)) {
+            "has_allure=true" >> $env:GITHUB_OUTPUT
+          }
+          else {
+            "has_allure=false" >> $env:GITHUB_OUTPUT
+          }
+
+      - name: Check Test Results
+        id: check_results
+        shell: pwsh
+        run: |
+          if ((Test-Path "TestResults") -and ((Get-ChildItem TestResults -Recurse -File).Count -gt 0)) {
+            "has_results=true" >> $env:GITHUB_OUTPUT
+          }
+          else {
+            "has_results=false" >> $env:GITHUB_OUTPUT
+          }
 
       - name: Upload Allure Results
         uses: actions/upload-artifact@v4
@@ -107,8 +93,8 @@ jobs:
           path: TestResults/
 
   allure:
-    if: always()
     needs: test
+    if: needs.test.outputs.has_allure == 'true'
 
     runs-on: ubuntu-latest
 
@@ -116,6 +102,9 @@ jobs:
       contents: write
       pages: write
       id-token: write
+
+    outputs:
+      report_generated: true
 
     steps:
 
@@ -138,9 +127,13 @@ jobs:
         with:
           path: allure-report
 
-  deploy:
-    if: always()
+  deploy-report:
     needs: allure
+    if: |
+      needs.test.outputs.has_allure == 'true' &&
+      needs.allure.result == 'success' &&
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/main'
 
     runs-on: ubuntu-latest
 

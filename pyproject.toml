@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "selenium-with-python-framework"
+version = "1.0.0"
+description = "Selenium with Python Automation Framework"
+readme = "ReadMe.md"
+requires-python = ">=3.12"
+
+[tool.setuptools]
+packages = [
+    "base",
+    "pb_pages"
+]

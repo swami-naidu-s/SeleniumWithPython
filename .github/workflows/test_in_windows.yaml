@@ -53,7 +53,7 @@ jobs:
 
       - name: Execute Tests
         run: |
-          python -m pytest -n 2 -s -v --alluredir=allure-results
+          python -m pytest --alluredir=allure-results
         # continue-on-error: true
 
       - name: Check Allure Results

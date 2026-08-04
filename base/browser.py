@@ -1,7 +1,4 @@
-# from selenium import webdriver
-# from base.utilities import get_config_data
 from .utilities import get_config_data
-# from selenium.webdriver.remote.webdriver import WebDriver
 from common_imports import *
 
 class Browser:

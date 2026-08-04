@@ -1,5 +1,3 @@
-# from base.utilities import *
-# from ..base import generate_timestamp_without_space, generate_random_number, generate_random_upper_string
 from base import generate_timestamp_without_space, generate_random_number, generate_random_upper_string
 
 class TestSmoke:

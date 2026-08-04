@@ -1,14 +1,4 @@
-# import allure
-# import os
-# import pytest
-
-# from base.browser import Browser
-# from base.utilities import get_config_data, get_logger
 from base import Browser, get_logger, get_config_data
-# from datetime import datetime
-# from logging import Logger
-# from selenium.webdriver.support.ui import WebDriverWait
-# from selenium.webdriver.remote.webdriver import WebDriver
 from common_imports import *
 from pb_pages import *
 
@@ -41,19 +31,14 @@ def pytest_runtest_makereport(item):
     if report.when == "call" and report.failed:
         pages = item.funcargs.get("pages")
         if pages:
-            # timestamp = getattr(item, "timestamp", None)
             timestamp = item.timestamp
             folder: str = os.path.join("TestResults", f"{timestamp}_{item.name}")
             pages.logger.error("Testcase Failed.")
             os.makedirs(folder, exist_ok=True)
-            # timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            # screenshot_path = os.path.join(folder, f"{item.name}_{timestamp}.png")
             screenshot_path = os.path.join(folder, f"{item.name}.png")
             pages.driver.save_screenshot(screenshot_path)
-            # print(f"Sceenshot captured with timestamp {timestamp}")
             print(f"Sceenshot captured")
             pages.logger.info("Screenshot captured")
-            # Add logs as testcase failed
             allure.attach.file(
                 screenshot_path,
                 name="Failure Screenshot",

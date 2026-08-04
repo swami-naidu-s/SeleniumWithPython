@@ -1,5 +1,3 @@
-# from base.selenium_base import SeleniumBase
-# from ..base import SeleniumBase
 from base import SeleniumBase
 from common_imports import *
 

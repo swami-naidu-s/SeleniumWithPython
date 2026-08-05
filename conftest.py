@@ -9,6 +9,8 @@ class Pages:
         self.logger = logger
         self.home_page = HomePage(driver, wait, logger)
         self.sign_up_page = SignUpPage(driver, wait, logger)
+        self.overview_page = AccountsOverviewPage(driver, wait, logger)
+        self.bill_pay_page = BillPayPage(driver, wait, logger)
 
 @pytest.fixture
 def pages(request):

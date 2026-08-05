@@ -9,3 +9,4 @@ __pycache__/
 reports/ 
 allure-results/
 TestResults/
+selenium_with_python_framework.egg-info

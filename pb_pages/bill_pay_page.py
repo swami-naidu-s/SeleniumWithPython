@@ -10,6 +10,8 @@ class BillPayPage(SeleniumBase):
     __label_textbox = lambda self, label: (By.XPATH, f"//td[starts-with(.,'{label}')]/following-sibling::td/input")
     __label_dropdown = lambda self, label: (By.XPATH, f"//td[starts-with(.,'{label}')]/following-sibling::td/select")
     __send_payment_button: tuple[str, str] = (By.XPATH, f"//input[@value='Send Payment']")
+    __success_header: tuple[str, str] = (By.XPATH, "//h1[text()='Bill Payment Complete']")
+    __success_message: tuple[str, str] = (By.XPATH, "//div[@id='billpayResult']/p[1]")
 
     def enter_label_textbox(self, label_name: str | list[str], text: str | list[str]):
         if isinstance(label_name, str) and isinstance(text, str):
@@ -31,4 +33,10 @@ class BillPayPage(SeleniumBase):
 
     def click_send_payment(self):
         self.click(self.__send_payment_button, "Send Payment", 2)
-        sleep(4)
+
+    def verify_successfull_payment(self, name: str):
+        assert self.is_element_displayed(self.__success_header, 3), f"{self.__success_header} is not displayed."
+        self.logger.info(f"'Bill Payment Complete' header displayed successfully.")
+        message: str = self.get_text(self.__success_message, "Success Message", 3)
+        assert message.__contains__(name), f"{message} does not have {name}."
+        self.logger.info(f"Success message verified successfully. '{message}' contains '{name}'.")

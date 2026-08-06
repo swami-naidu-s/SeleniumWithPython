@@ -1,5 +1,7 @@
-from base.utilities import generate_timestamp_without_space, generate_random_number, generate_random_upper_string
+from base import generate_timestamp_without_space, generate_random_number, generate_random_upper_string
+from common_imports import pytest
 
+@pytest.mark.regression
 class TestRegression:
     @staticmethod
     def test_bill_pay(pages):
@@ -22,6 +24,7 @@ class TestRegression:
         pages.bill_pay_page.enter_label_textbox(bill_labels, bill_values)
         pages.bill_pay_page.select_label_dropdown(bill_dropdown_label, account_number)
         pages.bill_pay_page.click_send_payment()
+        pages.bill_pay_page.verify_successfull_payment(bill_values[0])
 
         pages.home_page.logout()
         pages.home_page.verify_successfull_logout()

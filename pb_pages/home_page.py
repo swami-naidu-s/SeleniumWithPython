@@ -28,18 +28,15 @@ class HomePage(SeleniumBase):
 
     def verify_successfull_login(self, name: str | None = None):
         text: str = self.get_text(self.__welcome_text, "Welcome Text")
-        assert text.__contains__("Welcome"), f"'{text}' does not contains 'Welcome'"
-        self.logger.info(f"Verified successfully. '{text}' contains 'Welcome'")
+        self.verification(text.__contains__("Welcome"), f"'{text}' contains 'Welcome'", f"'{text}' does not contains 'Welcome'")
         if isinstance(name, str):
-            assert text.__contains__(name), f"'{text}' does not contains '{name}'"
-            self.logger.info(f"Verified successfully. '{text}' contains '{name}'")
+            self.verification(text.__contains__(name), f"'{text}' contains '{name}'", f"'{text}' does not contains '{name}'")
 
     def logout(self):
         self.click(self.__logout_button, "Log Out")
 
     def verify_successfull_logout(self):
-        assert self.is_element_displayed(self.__username_textbox), f"{self.__username_textbox} is not displayed"
-        self.logger.info(f"Verified successfully. {self.__username_textbox} is displayed")
+        self.verification(self.is_element_displayed(self.__username_textbox), f"{self.__username_textbox} is displayed", f"{self.__username_textbox} is not displayed")
 
     def click_on_register(self):
         self.click(self.__register_button, "Register")

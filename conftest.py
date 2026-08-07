@@ -24,6 +24,8 @@ def pages(request):
     yield Pages(driver, wait, logger)
     Browser.clean_up_browser(driver)
     logger.info("Testcase execution completed")
+    log_file = os.path.join("TestResults", f"{timestamp}_{testcase_name}", f"{testcase_name}_{timestamp}.log")
+    allure.attach.file(log_file, name=f"{testcase_name}_Log", attachment_type=allure.attachment_type.TEXT)
 
 @pytest.hookimpl(hookwrapper=True)
 def pytest_runtest_makereport(item):
@@ -37,12 +39,14 @@ def pytest_runtest_makereport(item):
             folder: str = os.path.join("TestResults", f"{timestamp}_{item.name}")
             pages.logger.error("Testcase Failed.")
             os.makedirs(folder, exist_ok=True)
+            page_source_path = os.path.join(folder, f"{item.name}.html")
+            with open(page_source_path, "w", encoding="utf-8") as file:
+                file.write(pages.driver.page_source)
+            allure.attach.file(page_source_path, name="Page Source", attachment_type=allure.attachment_type.HTML)
             screenshot_path = os.path.join(folder, f"{item.name}.png")
             pages.driver.save_screenshot(screenshot_path)
             print(f"Sceenshot captured")
             pages.logger.info("Screenshot captured")
-            allure.attach.file(
-                screenshot_path,
-                name="Failure Screenshot",
-                attachment_type=allure.attachment_type.PNG
-            )
+            allure.attach.file(screenshot_path, name="Failure Screenshot", attachment_type=allure.attachment_type.PNG)
+        if hasattr(report, "longreprtext"):
+            allure.attach(report.longreprtext, name="Exception Occurred:", attachment_type=allure.attachment_type.TEXT)

@@ -35,8 +35,6 @@ class BillPayPage(SeleniumBase):
         self.click(self.__send_payment_button, "Send Payment", 2)
 
     def verify_successfull_payment(self, name: str):
-        assert self.is_element_displayed(self.__success_header, 3), f"{self.__success_header} is not displayed."
-        self.logger.info(f"'Bill Payment Complete' header displayed successfully.")
+        self.verification(self.is_element_displayed(self.__success_header, 3), f"'Bill Payment Complete' header displayed.", f"{self.__success_header} is not displayed.")
         message: str = self.get_text(self.__success_message, "Success Message", 3)
-        assert message.__contains__(name), f"{message} does not have {name}."
-        self.logger.info(f"Success message verified successfully. '{message}' contains '{name}'.")
+        self.verification(message.__contains__(name), f"'{message}' contains '{name}'.", f"{message} does not have {name}.")

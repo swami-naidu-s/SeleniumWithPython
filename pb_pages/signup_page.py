@@ -26,8 +26,6 @@ class SignUpPage(SeleniumBase):
 
     def verify_success_note(self, user: str):
         welcome_text: str = self.get_text(self.__title, "Register user title")
-        assert welcome_text.__contains__(user), f"'{welcome_text}' does not contains username '{user}'"
-        self.logger.info(f"{welcome_text} verified successfully")
+        self.verification(welcome_text.__contains__(user), f"'{welcome_text}' contains username '{user}'", f"'{welcome_text}' does not contains username '{user}'")
         success_note: str = self.get_text(self.__success_note, "Register success note")
-        assert success_note.__contains__("successfully"), f"'{success_note}' does not contains 'successfully' text"
-        self.logger.info(f"Success note '{success_note}' verified successfully")
+        self.verification(success_note.__contains__("successfully"), f"'{success_note}' contains text 'successfully'", f"'{success_note}' does not contains text 'successfully'")

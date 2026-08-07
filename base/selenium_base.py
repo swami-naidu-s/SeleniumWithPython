@@ -38,6 +38,7 @@ class SeleniumBase:
             element = self.driver.find_element(*element)
         self.driver.execute_script("arguments[0].scrollIntoView({block: \"center\"});", element)
 
+    @allure.step("Entered Text {text} in {element} | {log_message}")
     def enter_text(self, element: tuple[str, str] | WebElement, text: str, log_message: str, clear: bool = False, timeout_seconds: int | None = None):
         try:
             self.wait_for_element_to_be_visible(element, timeout_seconds)
@@ -52,6 +53,7 @@ class SeleniumBase:
             self.logger.exception(e)
             raise Exception(f"Exception occurred: {e}")
 
+    @allure.step("Entered Text {text} in {element} | {log_message}")
     def enter_text_js(self, element: tuple[str, str] | WebElement, text: str, log_message: str, clear: bool = False, timeout_seconds: int | None = None):
         try:
             self.wait_for_element_to_be_visible(element, timeout_seconds)
@@ -66,6 +68,7 @@ class SeleniumBase:
             self.logger.exception(e)
             raise Exception(f"Exception occurred: {e}")
 
+    @allure.step("Clicked on {element} | {log_message}")
     def click(self, element: tuple[str, str] | WebElement, log_message: str, timeout_seconds: int | None = None):
         try:
             self.wait_for_element_to_be_visible(element, timeout_seconds)
@@ -79,6 +82,7 @@ class SeleniumBase:
             self.logger.exception(e)
             raise Exception(f"Exception occurred: {e}")
 
+    @allure.step("Clicked on {element} | {log_message}")
     def click_js(self, element: tuple[str, str] | WebElement, log_message: str, timeout_seconds: int | None = None):
         try:
             self.wait_for_element_to_be_visible(element, timeout_seconds)
@@ -92,6 +96,7 @@ class SeleniumBase:
             self.logger.exception(e)
             raise Exception(f"Exception occurred: {e}")
         
+    @allure.step("Right clicked on {element} | {log_message}")
     def right_click(self, element: tuple[str, str] | WebElement, log_message: str, timeout_seconds: int | None = None):
         try:
             self.wait_for_element_to_be_visible(element, timeout_seconds)
@@ -152,7 +157,8 @@ class SeleniumBase:
                     sleep(1)
                     timeout_seconds -= 1
         return result
-    
+
+    @allure.step("Selected {text} from dropdown {element} | {log_message}")
     def select_dropdown_by_text(self, element: tuple[str, str] | WebElement, text: str, log_message: str, timeout_seconds: int | None = None):
         try:
             self.wait_for_element_to_be_visible(element, timeout_seconds)
@@ -166,6 +172,7 @@ class SeleniumBase:
             self.logger.exception(e)
             raise Exception(f"Exception occurred: {e}")
         
+    @allure.step("Selected {value} from dropdown {element} | {log_message}")
     def select_dropdown_by_value(self, element: tuple[str, str] | WebElement, value: str, log_message: str, timeout_seconds: int | None = None):
         try:
             self.wait_for_element_to_be_visible(element, timeout_seconds)
@@ -179,6 +186,7 @@ class SeleniumBase:
             self.logger.exception(e)
             raise Exception(f"Exception occurred: {e}")
         
+    @allure.step("Selected {index} from dropdown {element} | {log_message}")
     def select_dropdown_by_index(self, element: tuple[str, str] | WebElement, index: int, log_message: str, timeout_seconds: int | None = None):
         try:
             self.wait_for_element_to_be_visible(element, timeout_seconds)
@@ -203,7 +211,8 @@ class SeleniumBase:
                 if t >= timeout_seconds:
                     return False
                 sleep(1)
-    
+
+    @allure.step("Alert Accepted | {log_message}")
     def accept_alert(self, log_message: str, timeout_seconds: int | None = None):
         try:
             wait = None
@@ -219,6 +228,7 @@ class SeleniumBase:
             self.logger.exception(e)
             raise Exception(f"Exception occurred: {e}")
     
+    @allure.step("Alert Dismissed | {log_message}")
     def dismiss_alert(self, log_message: str, timeout_seconds: int | None = None):
         try:
             wait = None
@@ -274,7 +284,8 @@ class SeleniumBase:
         except Exception as e:
             self.logger.exception(e)
             raise Exception(f"Exception occurred: {e}")
-        
+
+    @allure.step("Page Loaded")
     def wait_for_page_load(self, timeout_seconds: int | None = None):
         try: 
             wait = None
@@ -286,6 +297,7 @@ class SeleniumBase:
             self.logger.exception(e)
             raise Exception(f"Exception occurred: {e}")
 
+    @allure.step("Double clicked on {element} | {log_message}")
     def double_click(self, element: tuple[str, str] | WebElement, log_message: str, timeout_seconds: int | None = None):
         try:
             self.wait_for_element_to_be_visible(element, timeout_seconds)
@@ -298,7 +310,8 @@ class SeleniumBase:
         except Exception as e:
             self.logger.exception(e)
             raise Exception(f"Exception occurred: {e}")
-        
+
+    @allure.step("Clicked and holded on {element} | {log_message}")
     def click_and_hold(self, element: tuple[str, str] | WebElement, log_message: str, timeout_seconds: int | None = None):
         try:
             self.wait_for_element_to_be_visible(element, timeout_seconds)
@@ -311,7 +324,8 @@ class SeleniumBase:
         except Exception as e:
             self.logger.exception(e)
             raise Exception(f"Exception occurred: {e}")
-        
+
+    @allure.step("Dragged {source_element} and dropped on {destination_element} | {log_message}")
     def drag_and_drop(self, source_element: tuple[str, str] | WebElement, destination_element: tuple[str, str] | WebElement, log_message: str, timeout_seconds: int | None = None):
         try:
             self.wait_for_element_to_be_visible(source_element, timeout_seconds)
@@ -326,7 +340,8 @@ class SeleniumBase:
         except Exception as e:
             self.logger.exception(e)
             raise Exception(f"Exception occurred: {e}")
-        
+
+    @allure.step("Pressed Tab")
     def press_tab(self, element: tuple[str, str] | WebElement | None = None, timeout_seconds: int | None = None):
         try:
             if isinstance(element, type(None)):
@@ -341,7 +356,8 @@ class SeleniumBase:
         except Exception as e:
             self.logger.exception(e)
             raise Exception(f"Exception occurred: {e}")
-        
+
+    @allure.step("Hovered on {element} | {log_message}")
     def hover(self, element: tuple[str, str] | WebElement, log_message: str, timeout_seconds: int | None = None):
         try:
             self.wait_for_element_to_be_visible(element, timeout_seconds)
@@ -354,6 +370,7 @@ class SeleniumBase:
             self.logger.exception(e)
             raise Exception(f"Exception occurred: {e}")
         
+    @allure.step("Hovered and clicked on {element} | {log_message}")
     def hover_and_click(self, element: tuple[str, str] | WebElement, log_message: str, timeout_seconds: int | None = None):
         try:
             self.wait_for_element_to_be_visible(element, timeout_seconds)
@@ -366,3 +383,8 @@ class SeleniumBase:
         except Exception as e:
             self.logger.exception(e)
             raise Exception(f"Exception occurred: {e}")
+
+    @allure.step("Verification: {condition}")
+    def verification(self, condition: bool, success_log: str, failure_log):
+        assert condition, f"Verification failed: {failure_log}"
+        self.logger.info(f"Verified Successfully: {success_log}")

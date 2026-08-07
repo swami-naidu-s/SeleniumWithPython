@@ -1,5 +1,7 @@
 from base import generate_timestamp_without_space, generate_random_number, generate_random_upper_string
+from common_imports import pytest
 
+@pytest.mark.smoke
 class TestSmoke:
     @staticmethod
     def test_login(pages):
